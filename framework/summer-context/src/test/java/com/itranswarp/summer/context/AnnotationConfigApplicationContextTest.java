@@ -16,6 +16,7 @@ import com.itranswarp.imported.LocalDateConfiguration;
 import com.itranswarp.imported.ZonedDateConfiguration;
 import com.itranswarp.scan.ScanApplication;
 import com.itranswarp.scan.convert.ValueConverterBean;
+import com.itranswarp.scan.custom.annotation.CustomAnnotationBean;
 import com.itranswarp.scan.destroy.AnnotationDestroyBean;
 import com.itranswarp.scan.destroy.SpecifyDestroyBean;
 import com.itranswarp.scan.init.AnnotationInitBean;
@@ -35,6 +36,14 @@ import com.itranswarp.scan.sub1.sub2.sub3.Sub3Bean;
 import com.itranswarp.summer.io.PropertyResolver;
 
 public class AnnotationConfigApplicationContextTest {
+
+    @Test
+    void testCustomAnnotation() {
+        try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
+            assertNotNull(ctx.getBean(CustomAnnotationBean.class));
+            assertNotNull(ctx.getBean("customAnnotation"));
+        }
+    }
 
     @Test
     void testInitMethod() {
