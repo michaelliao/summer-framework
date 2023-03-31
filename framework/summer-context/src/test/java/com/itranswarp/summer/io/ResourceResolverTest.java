@@ -86,5 +86,4 @@ public class ResourceResolverTest {
                 "com/itranswarp/scan/sub1/sub2/sub3/sub3.txt", //
         }, classes.toArray(String[]::new));
     }
-
 }
