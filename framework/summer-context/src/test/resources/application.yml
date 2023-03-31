@@ -1,0 +1,28 @@
+app:
+  title: Summer Framework
+  version: 1.0.0
+
+# standard structure for datasource, mail, etc:
+summer:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: m10n99c5
+    auto-commit: ${AUTO_COMMIT:false}
+
+# test data types:
+other:
+  bool-data: true
+  int-data: 12345
+  hex-data: 0x1a2b3c
+  hex-string: "0x1a2b3c"
+  deep:
+    deep:
+      level: level-4
+  address: |
+    123 Walkman Dr.
+    Suite No.456
+  list:
+    - Apple
+    - Orange
+    - Pear
