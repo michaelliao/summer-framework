@@ -34,7 +34,6 @@ import com.itranswarp.summer.annotation.Value;
 import com.itranswarp.summer.exception.BeanCreationException;
 import com.itranswarp.summer.exception.BeanDefinitionException;
 import com.itranswarp.summer.exception.BeanNotOfRequiredTypeException;
-import com.itranswarp.summer.exception.BeansException;
 import com.itranswarp.summer.exception.NoSuchBeanDefinitionException;
 import com.itranswarp.summer.exception.NoUniqueBeanDefinitionException;
 import com.itranswarp.summer.exception.UnsatisfiedDependencyException;
@@ -271,6 +270,8 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
 
                 String beanName = ClassUtils.getBeanName(clazz);
                 var def = new BeanDefinition(beanName, clazz, getSuitableConstructor(clazz), getOrder(clazz), clazz.isAnnotationPresent(Primary.class),
+                        // named init / destroy method:
+                        null, null,
                         // init method:
                         ClassUtils.findAnnotationMethod(clazz, PostConstruct.class),
                         // destroy method:
@@ -294,41 +295,26 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
      * 注入依赖并调用init方法
      */
     void initBean(BeanDefinition def) {
-        Object beanInstance = def.getInstance();
-        // 如果Proxy改变了原始Bean，又希望注入到原始Bean，则由BeanPostProcessor指定原始Bean:
-        List<BeanPostProcessor> reversedBeanPostProcessors = new ArrayList<>(this.beanPostProcessors);
-        Collections.reverse(reversedBeanPostProcessors);
-        for (BeanPostProcessor beanPostProcessor : reversedBeanPostProcessors) {
-            Object restoredInstance = beanPostProcessor.postProcessOnSetProperty(beanInstance, def.getName());
-            if (restoredInstance != beanInstance) {
-                logger.atDebug().log("BeanPostProcessor {} specified injection from {} to {}.", beanPostProcessor.getClass().getSimpleName(), beanInstance,
-                        restoredInstance);
-                beanInstance = restoredInstance;
-            }
-        }
+        // 获取Bean实例，或被代理的原始实例:
+        final Object beanInstance = getProxiedInstance(def);
         try {
             injectProperties(def, def.getBeanClass(), beanInstance);
         } catch (ReflectiveOperationException e) {
             throw new BeanCreationException(e);
         }
+
         // 调用init方法:
-        if (def.getInitMethod() != null) {
-            try {
-                def.getInitMethod().invoke(beanInstance);
-            } catch (ReflectiveOperationException e) {
-                throw new BeanCreationException(e);
-            }
-        }
+        callMethod(beanInstance, def.getInitMethod(), def.getInitMethodName());
 
         // 调用BeanPostProcessor.postProcessAfterInitialization():
-        for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+        beanPostProcessors.forEach(beanPostProcessor -> {
             Object processedInstance = beanPostProcessor.postProcessAfterInitialization(def.getInstance(), def.getName());
             if (processedInstance != def.getInstance()) {
                 logger.atDebug().log("BeanPostProcessor {} return different bean from {} to {}.", beanPostProcessor.getClass().getSimpleName(),
                         def.getInstance(), processedInstance);
                 def.setInstance(processedInstance);
             }
-        }
+        });
     }
 
     /**
@@ -489,9 +475,11 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
                 var def = new BeanDefinition(ClassUtils.getBeanName(method), beanClass, factoryBeanName, method, getOrder(method),
                         method.isAnnotationPresent(Primary.class),
                         // init method:
-                        bean.initMethod().isEmpty() ? null : ClassUtils.getNamedMethod(beanClass, bean.initMethod()),
+                        bean.initMethod().isEmpty() ? null : bean.initMethod(),
                         // destroy method:
-                        bean.destroyMethod().isEmpty() ? null : ClassUtils.getNamedMethod(beanClass, bean.destroyMethod()));
+                        bean.destroyMethod().isEmpty() ? null : bean.destroyMethod(),
+                        // @PostConstruct / @PreDestroy method:
+                        null, null);
                 addBeanDefinitions(defs, def);
                 logger.atDebug().log("define bean: {}", def);
             }
@@ -731,17 +719,47 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
     public void close() {
         logger.info("Closing {}...", this.getClass().getName());
         this.beans.values().forEach(def -> {
-            Method method = def.getDestroyMethod();
-            if (method != null) {
-                try {
-                    method.invoke(def.getInstance());
-                } catch (ReflectiveOperationException e) {
-                    throw new BeansException(e);
-                }
-            }
+            final Object beanInstance = getProxiedInstance(def);
+            callMethod(beanInstance, def.getDestroyMethod(), def.getDestroyMethodName());
         });
         this.beans.clear();
         logger.info("{} closed.", this.getClass().getName());
         ApplicationContextUtils.setApplicationContext(null);
+    }
+
+    private Object getProxiedInstance(BeanDefinition def) {
+        Object beanInstance = def.getInstance();
+        // 如果Proxy改变了原始Bean，又希望注入到原始Bean，则由BeanPostProcessor指定原始Bean:
+        List<BeanPostProcessor> reversedBeanPostProcessors = new ArrayList<>(this.beanPostProcessors);
+        Collections.reverse(reversedBeanPostProcessors);
+        for (BeanPostProcessor beanPostProcessor : reversedBeanPostProcessors) {
+            Object restoredInstance = beanPostProcessor.postProcessOnSetProperty(beanInstance, def.getName());
+            if (restoredInstance != beanInstance) {
+                logger.atDebug().log("BeanPostProcessor {} specified injection from {} to {}.", beanPostProcessor.getClass().getSimpleName(), beanInstance,
+                        restoredInstance);
+                beanInstance = restoredInstance;
+            }
+        }
+        return beanInstance;
+    }
+
+    private void callMethod(Object beanInstance, Method method, String namedMethod) {
+        // 调用init/destroy方法:
+        if (method != null) {
+            try {
+                method.invoke(beanInstance);
+            } catch (ReflectiveOperationException e) {
+                throw new BeanCreationException(e);
+            }
+        } else if (namedMethod != null) {
+            // 查找initMethod/destroyMethod="xyz"，注意是在实际类型中查找:
+            Method named = ClassUtils.getNamedMethod(beanInstance.getClass(), namedMethod);
+            named.setAccessible(true);
+            try {
+                named.invoke(beanInstance);
+            } catch (ReflectiveOperationException e) {
+                throw new BeanCreationException(e);
+            }
+        }
     }
 }
