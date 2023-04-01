@@ -12,7 +12,7 @@ import com.itranswarp.summer.jdbc.JdbcTestBase;
 public class JdbcWithoutTxTest extends JdbcTestBase {
 
     @Test
-    void testJdbcWithoutTx() {
+    public void testJdbcWithoutTx() {
         try (var ctx = new AnnotationConfigApplicationContext(JdbcWithoutTxApplication.class, createPropertyResolver())) {
             JdbcTemplate jdbcTemplate = ctx.getBean(JdbcTemplate.class);
             jdbcTemplate.update(CREATE_USER);

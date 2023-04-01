@@ -45,7 +45,7 @@ public class JdbcTestBase {
     }
 
     void cleanDb() {
-        Path db = Path.of("./test.db").normalize().toAbsolutePath();
+        Path db = Path.of("test.db").normalize().toAbsolutePath();
         try {
             Files.deleteIfExists(db);
         } catch (IOException e) {

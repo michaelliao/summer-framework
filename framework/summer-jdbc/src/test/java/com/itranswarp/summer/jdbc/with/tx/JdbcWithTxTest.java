@@ -14,7 +14,7 @@ import com.itranswarp.summer.jdbc.JdbcTestBase;
 public class JdbcWithTxTest extends JdbcTestBase {
 
     @Test
-    void testJdbcWithTx() {
+    public void testJdbcWithTx() {
         try (var ctx = new AnnotationConfigApplicationContext(JdbcWithTxApplication.class, createPropertyResolver())) {
             JdbcTemplate jdbcTemplate = ctx.getBean(JdbcTemplate.class);
             jdbcTemplate.update(CREATE_USER);

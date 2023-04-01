@@ -12,7 +12,7 @@ import com.itranswarp.summer.io.PropertyResolver;
 public class MetricProxyTest {
 
     @Test
-    void testMetricProxy() {
+    public void testMetricProxy() {
         try (var ctx = new AnnotationConfigApplicationContext(MetricApplication.class, createPropertyResolver())) {
             HashWorker worker = ctx.getBean(HashWorker.class);
 

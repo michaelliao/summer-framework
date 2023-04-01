@@ -12,48 +12,48 @@ import com.itranswarp.summer.exception.BeanDefinitionException;
 public class AnnoUtilsTest {
 
     @Test
-    void noComponent() throws Exception {
+    public void noComponent() throws Exception {
         assertNull(ClassUtils.findAnnotation(Simple.class, Component.class));
     }
 
     @Test
-    void simpleComponent() throws Exception {
+    public void simpleComponent() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(SimpleComponent.class, Component.class));
         assertEquals("simpleComponent", ClassUtils.getBeanName(SimpleComponent.class));
     }
 
     @Test
-    void simpleComponentWithName() throws Exception {
+    public void simpleComponentWithName() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(SimpleComponentWithName.class, Component.class));
         assertEquals("simpleName", ClassUtils.getBeanName(SimpleComponentWithName.class));
     }
 
     @Test
-    void simpleConfiguration() throws Exception {
+    public void simpleConfiguration() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(SimpleConfiguration.class, Component.class));
         assertEquals("simpleConfiguration", ClassUtils.getBeanName(SimpleConfiguration.class));
     }
 
     @Test
-    void simpleConfigurationWithName() throws Exception {
+    public void simpleConfigurationWithName() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(SimpleConfigurationWithName.class, Component.class));
         assertEquals("simpleCfg", ClassUtils.getBeanName(SimpleConfigurationWithName.class));
     }
 
     @Test
-    void customComponent() throws Exception {
+    public void customComponent() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(Custom.class, Component.class));
         assertEquals("custom", ClassUtils.getBeanName(Custom.class));
     }
 
     @Test
-    void customComponentWithName() throws Exception {
+    public void customComponentWithName() throws Exception {
         assertNotNull(ClassUtils.findAnnotation(CustomWithName.class, Component.class));
         assertEquals("customName", ClassUtils.getBeanName(CustomWithName.class));
     }
 
     @Test
-    void duplicateComponent() throws Exception {
+    public void duplicateComponent() throws Exception {
         assertThrows(BeanDefinitionException.class, () -> {
             ClassUtils.findAnnotation(DuplicateComponent.class, Component.class);
         });

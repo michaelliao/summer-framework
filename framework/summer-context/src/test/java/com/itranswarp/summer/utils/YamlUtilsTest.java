@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class YamlUtilsTest {
 
     @Test
-    void testLoadYaml() {
+    public void testLoadYaml() {
         Map<String, Object> configs = YamlUtils.loadYamlAsPlainMap("/application.yml");
         for (String key : configs.keySet()) {
             Object value = configs.get(key);

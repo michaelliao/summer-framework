@@ -12,7 +12,7 @@ import com.itranswarp.summer.io.PropertyResolver;
 public class AroundProxyTest {
 
     @Test
-    void testAroundProxy() {
+    public void testAroundProxy() {
         try (var ctx = new AnnotationConfigApplicationContext(AroundApplication.class, createPropertyResolver())) {
             OriginBean proxy = ctx.getBean(OriginBean.class);
             // OriginBean$ByteBuddy$8NoD1FcQ

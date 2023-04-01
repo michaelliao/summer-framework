@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class PropertyResolverTest {
 
     @Test
-    void propertyValue() {
+    public void propertyValue() {
         var props = new Properties();
         props.setProperty("app.title", "Summer Framework");
         props.setProperty("app.version", "v1.0");
@@ -47,7 +47,7 @@ public class PropertyResolverTest {
     }
 
     @Test
-    void requiredProperty() {
+    public void requiredProperty() {
         var props = new Properties();
         props.setProperty("app.title", "Summer Framework");
         props.setProperty("app.version", "v1.0");
@@ -59,7 +59,7 @@ public class PropertyResolverTest {
     }
 
     @Test
-    void propertyHolder() {
+    public void propertyHolder() {
         String home = System.getenv("HOME");
         System.out.println("env HOME=" + home);
 

@@ -38,7 +38,7 @@ import com.itranswarp.summer.io.PropertyResolver;
 public class AnnotationConfigApplicationContextTest {
 
     @Test
-    void testCustomAnnotation() {
+    public void testCustomAnnotation() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             assertNotNull(ctx.getBean(CustomAnnotationBean.class));
             assertNotNull(ctx.getBean("customAnnotation"));
@@ -46,7 +46,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testInitMethod() {
+    public void testInitMethod() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             // test @PostConstruct:
             var bean1 = ctx.getBean(AnnotationInitBean.class);
@@ -57,7 +57,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testImport() {
+    public void testImport() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             assertNotNull(ctx.getBean(LocalDateConfiguration.class));
             assertNotNull(ctx.getBean("startLocalDate"));
@@ -68,7 +68,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testDestroyMethod() {
+    public void testDestroyMethod() {
         AnnotationDestroyBean bean1 = null;
         SpecifyDestroyBean bean2 = null;
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
@@ -83,7 +83,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testConverter() {
+    public void testConverter() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             var bean = ctx.getBean(ValueConverterBean.class);
 
@@ -125,7 +125,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testNested() {
+    public void testNested() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             ctx.getBean(OuterBean.class);
             ctx.getBean(NestedBean.class);
@@ -133,7 +133,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testPrimary() {
+    public void testPrimary() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             var person = ctx.getBean(PersonBean.class);
             assertEquals(TeacherBean.class, person.getClass());
@@ -143,7 +143,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testProxy() {
+    public void testProxy() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             // test proxy:
             OriginBean proxy = ctx.getBean(OriginBean.class);
@@ -163,7 +163,7 @@ public class AnnotationConfigApplicationContextTest {
     }
 
     @Test
-    void testSub() {
+    public void testSub() {
         try (var ctx = new AnnotationConfigApplicationContext(ScanApplication.class, createPropertyResolver())) {
             ctx.getBean(Sub1Bean.class);
             ctx.getBean(Sub2Bean.class);

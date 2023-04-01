@@ -16,7 +16,7 @@ import jakarta.annotation.sub.AnnoScan;
 public class ResourceResolverTest {
 
     @Test
-    void scanClass() {
+    public void scanClass() {
         var pkg = "com.itranswarp.scan";
         var rr = new ResourceResolver(pkg);
         List<String> classes = rr.scan(res -> {
@@ -48,7 +48,7 @@ public class ResourceResolverTest {
     }
 
     @Test
-    void scanJar() {
+    public void scanJar() {
         var pkg = PostConstruct.class.getPackageName();
         var rr = new ResourceResolver(pkg);
         List<String> classes = rr.scan(res -> {
@@ -68,7 +68,7 @@ public class ResourceResolverTest {
     }
 
     @Test
-    void scanTxt() {
+    public void scanTxt() {
         var pkg = "com.itranswarp.scan";
         var rr = new ResourceResolver(pkg);
         List<String> classes = rr.scan(res -> {
