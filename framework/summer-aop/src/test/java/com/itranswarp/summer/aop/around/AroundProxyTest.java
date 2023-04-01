@@ -25,6 +25,11 @@ public class AroundProxyTest {
 
             assertEquals("Hello, Bob!", proxy.hello());
             assertEquals("Morning, Bob.", proxy.morning());
+
+            // test injected proxy:
+            OtherBean other = ctx.getBean(OtherBean.class);
+            assertSame(proxy, other.origin);
+            assertEquals("Hello, Bob!", other.origin.hello());
         }
     }
 
