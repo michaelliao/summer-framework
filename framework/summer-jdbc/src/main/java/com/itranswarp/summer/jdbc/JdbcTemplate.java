@@ -22,17 +22,20 @@ public class JdbcTemplate {
     }
 
     public Number queryForNumber(String sql, Object... args) throws DataAccessException {
-        Object obj = queryForObject(sql, NumberRowMapper.instance, args);
-        if (obj == null) {
-            throw new DataAccessException("Empty result set.");
-        }
-        if (Number.class.isInstance(obj)) {
-            return (Number) obj;
-        }
-        throw new DataAccessException(String.format("Unexpected type of result set: expected Number but actual %s.", obj.getClass().getName()));
+        return queryForObject(sql, NumberRowMapper.instance, args);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T queryForObject(String sql, Class<T> clazz, Object... args) throws DataAccessException {
+        if (clazz == String.class) {
+            return (T) queryForObject(sql, StringRowMapper.instance, args);
+        }
+        if (clazz == Boolean.class || clazz == boolean.class) {
+            return (T) queryForObject(sql, BooleanRowMapper.instance, args);
+        }
+        if (Number.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
+            return (T) queryForObject(sql, NumberRowMapper.instance, args);
+        }
         return queryForObject(sql, new BeanRowMapper<>(clazz), args);
     }
 
@@ -155,6 +158,26 @@ public class JdbcTemplate {
         for (int i = 0; i < args.length; i++) {
             ps.setObject(i + 1, args[i]);
         }
+    }
+}
+
+class StringRowMapper implements RowMapper<String> {
+
+    static StringRowMapper instance = new StringRowMapper();
+
+    @Override
+    public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getString(1);
+    }
+}
+
+class BooleanRowMapper implements RowMapper<Boolean> {
+
+    static BooleanRowMapper instance = new BooleanRowMapper();
+
+    @Override
+    public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getBoolean(1);
     }
 }
 

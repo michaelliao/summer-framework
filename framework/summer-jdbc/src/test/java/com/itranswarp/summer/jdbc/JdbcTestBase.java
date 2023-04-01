@@ -25,6 +25,8 @@ public class JdbcTestBase {
     public static final String DELETE_ADDRESS_BY_USERID = "DELETE FROM addresses WHERE userId = ?";
 
     public static final String SELECT_USER = "SELECT * FROM users WHERE id = ?";
+    public static final String SELECT_USER_NAME = "SELECT name FROM users WHERE id = ?";
+    public static final String SELECT_USER_AGE = "SELECT age FROM users WHERE id = ?";
     public static final String SELECT_ADDRESS_BY_USERID = "SELECT * FROM addresses WHERE userId = ?";
 
     @BeforeEach
