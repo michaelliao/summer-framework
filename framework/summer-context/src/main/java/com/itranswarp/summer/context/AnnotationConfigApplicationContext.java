@@ -46,49 +46,56 @@ import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
-public class AnnotationConfigApplicationContext implements ApplicationContext {
+public class AnnotationConfigApplicationContext implements ConfigurableApplicationContext {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final PropertyResolver propertyResolver;
     protected final Map<String, BeanDefinition> beans;
 
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+    private Set<String> creatingBeanNames;
+
     public AnnotationConfigApplicationContext(Class<?> configClass, PropertyResolver propertyResolver) {
+        ApplicationContextUtils.setApplicationContext(this);
+
         this.propertyResolver = propertyResolver;
 
         // 扫描获取所有Bean的Class类型:
-        Set<String> beanClassNames = scanForClassNames(configClass);
+        final Set<String> beanClassNames = scanForClassNames(configClass);
 
         // 创建Bean的定义:
         this.beans = createBeanDefinitions(beanClassNames);
 
+        // 创建BeanName检测循环依赖:
+        this.creatingBeanNames = new HashSet<>();
+
         // 创建@Configuration类型的Bean:
-        Set<String> configurationNames = new HashSet<>();
         this.beans.values().stream()
                 // 过滤出@Configuration:
                 .filter(this::isConfigurationDefinition).sorted().map(def -> {
-                    createBeanAsEarlySingleton(configurationNames, def, List.of(), false);
+                    createBeanAsEarlySingleton(def);
                     return def.getName();
                 }).collect(Collectors.toList());
 
         // 创建BeanPostProcessor类型的Bean:
-        Set<String> processorNames = new HashSet<>();
-        List<BeanPostProcessor> beanPostProcessors = this.beans.values().stream()
+        List<BeanPostProcessor> processors = this.beans.values().stream()
                 // 过滤出BeanPostProcessor:
                 .filter(this::isBeanPostProcessorDefinition)
                 // 排序:
                 .sorted()
                 // instantiate and collect:
                 .map(def -> {
-                    return (BeanPostProcessor) createBeanAsEarlySingleton(processorNames, def, List.of(), false);
+                    return (BeanPostProcessor) createBeanAsEarlySingleton(def);
                 }).collect(Collectors.toList());
+        this.beanPostProcessors.addAll(processors);
 
         // 创建其他普通Bean:
-        createNormalBeans(beanPostProcessors);
+        createNormalBeans();
 
         // 通过字段和set方法注入依赖，并调用init方法:
         this.beans.values().forEach(def -> {
-            initBean(def, beanPostProcessors);
+            initBean(def);
         });
 
         if (logger.isDebugEnabled()) {
@@ -101,29 +108,28 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     /**
      * 创建普通的Bean
      */
-    void createNormalBeans(List<BeanPostProcessor> beanPostProcessors) {
+    void createNormalBeans() {
         // 获取BeanDefinition列表:
         List<BeanDefinition> defs = this.beans.values().stream()
                 // filter bean definitions by not instantiation:
                 .filter(def -> def.getInstance() == null).sorted().collect(Collectors.toList());
 
-        // 用于检测循环依赖的Set<BeanName>:
-        Set<String> creatingNames = new HashSet<>();
         defs.forEach(def -> {
             // 如果Bean未被创建(可能在其他Bean的构造方法注入前被创建):
             if (def.getInstance() == null) {
                 // 创建Bean:
-                createBeanAsEarlySingleton(creatingNames, def, beanPostProcessors, true);
+                createBeanAsEarlySingleton(def);
             }
         });
     }
 
     /**
-     * 创建一个Bean，在构造方法中注入的依赖Bean会自动创建，然后使用BeanPostProcessor处理，但不进行字段和方法级别的注入
+     * 创建一个Bean，然后使用BeanPostProcessor处理，但不进行字段和方法级别的注入。如果创建的Bean不是Configuration或BeanPostProcessor，则在构造方法中注入的依赖Bean会自动创建。
      */
-    Object createBeanAsEarlySingleton(Set<String> creatingBeanNames, BeanDefinition def, List<BeanPostProcessor> beanPostProcessors, boolean createRecursive) {
+    @Override
+    public Object createBeanAsEarlySingleton(BeanDefinition def) {
         logger.atDebug().log("Try create bean '{}' as early singleton: {}", def.getName(), def.getBeanClass().getName());
-        if (!creatingBeanNames.add(def.getName())) {
+        if (!this.creatingBeanNames.add(def.getName())) {
             throw new UnsatisfiedDependencyException(String.format("Circular dependency detected when create bean '%s'", def.getName()));
         }
 
@@ -148,13 +154,15 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             final Autowired autowired = ClassUtils.getAnnotation(paramAnnos, Autowired.class);
 
             // @Configuration类型的Bean是工厂，不允许使用@Autowired创建:
-            if (isConfigurationDefinition(def) && autowired != null) {
+            final boolean isConfiguration = isConfigurationDefinition(def);
+            if (isConfiguration && autowired != null) {
                 throw new BeanCreationException(
                         String.format("Cannot specify @Autowired when create @Configuration bean '%s': %s.", def.getName(), def.getBeanClass().getName()));
             }
 
             // BeanPostProcessor不能依赖其他Bean，不允许使用@Autowired创建:
-            if (isBeanPostProcessorDefinition(def) && autowired != null) {
+            final boolean isBeanPostProcessor = isBeanPostProcessorDefinition(def);
+            if (isBeanPostProcessor && autowired != null) {
                 throw new BeanCreationException(
                         String.format("Cannot specify @Autowired when create BeanPostProcessor '%s': %s.", def.getName(), def.getBeanClass().getName()));
             }
@@ -187,9 +195,9 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                 if (dependsOnDef != null) {
                     // 获取依赖Bean:
                     Object autowiredBeanInstance = dependsOnDef.getInstance();
-                    if (autowiredBeanInstance == null && createRecursive) {
+                    if (autowiredBeanInstance == null && !isConfiguration && !isBeanPostProcessor) {
                         // 当前依赖Bean尚未初始化，递归调用初始化该依赖Bean:
-                        autowiredBeanInstance = createBeanAsEarlySingleton(creatingBeanNames, dependsOnDef, beanPostProcessors, true);
+                        autowiredBeanInstance = createBeanAsEarlySingleton(dependsOnDef);
                     }
                     args[i] = autowiredBeanInstance;
                 } else {
@@ -285,10 +293,10 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     /**
      * 注入依赖并调用init方法
      */
-    void initBean(BeanDefinition def, List<BeanPostProcessor> beanPostProcessors) {
+    void initBean(BeanDefinition def) {
         Object beanInstance = def.getInstance();
         // 如果Proxy改变了原始Bean，又希望注入到原始Bean，则由BeanPostProcessor指定原始Bean:
-        List<BeanPostProcessor> reversedBeanPostProcessors = new ArrayList<>(beanPostProcessors);
+        List<BeanPostProcessor> reversedBeanPostProcessors = new ArrayList<>(this.beanPostProcessors);
         Collections.reverse(reversedBeanPostProcessors);
         for (BeanPostProcessor beanPostProcessor : reversedBeanPostProcessors) {
             Object restoredInstance = beanPostProcessor.postProcessOnSetProperty(beanInstance, def.getName());
@@ -583,11 +591,21 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     /**
+     * 根据Name查找BeanDefinition，如果Name不存在，返回null
+     */
+    @Nullable
+    @Override
+    public BeanDefinition findBeanDefinition(String name) {
+        return this.beans.get(name);
+    }
+
+    /**
      * 根据Name和Type查找BeanDefinition，如果Name不存在，返回null，如果Name存在，但Type不匹配，抛出异常。
      */
     @Nullable
-    protected BeanDefinition findBeanDefinition(String name, Class<?> requiredType) {
-        BeanDefinition def = this.beans.get(name);
+    @Override
+    public BeanDefinition findBeanDefinition(String name, Class<?> requiredType) {
+        BeanDefinition def = findBeanDefinition(name);
         if (def == null) {
             return null;
         }
@@ -601,7 +619,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     /**
      * 根据Type查找若干个BeanDefinition，返回0个或多个。
      */
-    protected List<BeanDefinition> findBeanDefinitions(Class<?> type) {
+    @Override
+    public List<BeanDefinition> findBeanDefinitions(Class<?> type) {
         return this.beans.values().stream()
                 // filter by type and sub-type:
                 .filter(def -> type.isAssignableFrom(def.getBeanClass()))
@@ -613,7 +632,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      * 根据Type查找某个BeanDefinition，如果不存在返回null，如果存在多个返回@Primary标注的一个，如果有多个@Primary标注，或没有@Primary标注但找到多个，均抛出NoUniqueBeanDefinitionException
      */
     @Nullable
-    protected BeanDefinition findBeanDefinition(Class<?> type) {
+    @Override
+    public BeanDefinition findBeanDefinition(Class<?> type) {
         List<BeanDefinition> defs = findBeanDefinitions(type);
         if (defs.isEmpty()) {
             return null;
@@ -722,5 +742,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         });
         this.beans.clear();
         logger.info("{} closed.", this.getClass().getName());
+        ApplicationContextUtils.setApplicationContext(null);
     }
 }
