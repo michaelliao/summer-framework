@@ -311,7 +311,7 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
             Object processedInstance = beanPostProcessor.postProcessAfterInitialization(def.getInstance(), def.getName());
             if (processedInstance != def.getInstance()) {
                 logger.atDebug().log("BeanPostProcessor {} return different bean from {} to {}.", beanPostProcessor.getClass().getSimpleName(),
-                        def.getInstance(), processedInstance);
+                        def.getInstance().getClass().getName(), processedInstance.getClass().getName());
                 def.setInstance(processedInstance);
             }
         });
@@ -735,8 +735,8 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
         for (BeanPostProcessor beanPostProcessor : reversedBeanPostProcessors) {
             Object restoredInstance = beanPostProcessor.postProcessOnSetProperty(beanInstance, def.getName());
             if (restoredInstance != beanInstance) {
-                logger.atDebug().log("BeanPostProcessor {} specified injection from {} to {}.", beanPostProcessor.getClass().getSimpleName(), beanInstance,
-                        restoredInstance);
+                logger.atDebug().log("BeanPostProcessor {} specified injection from {} to {}.", beanPostProcessor.getClass().getSimpleName(),
+                        beanInstance.getClass().getSimpleName(), restoredInstance.getClass().getSimpleName());
                 beanInstance = restoredInstance;
             }
         }
