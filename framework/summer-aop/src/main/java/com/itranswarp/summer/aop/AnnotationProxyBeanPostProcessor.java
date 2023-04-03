@@ -44,7 +44,7 @@ public abstract class AnnotationProxyBeanPostProcessor<A extends Annotation> imp
     }
 
     Object createProxy(Class<?> beanClass, Object bean, String handlerName) {
-        ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) ApplicationContextUtils.getApplicationContext();
+        ConfigurableApplicationContext ctx = (ConfigurableApplicationContext) ApplicationContextUtils.getRequiredApplicationContext();
 
         BeanDefinition def = ctx.findBeanDefinition(handlerName);
         if (def == null) {
