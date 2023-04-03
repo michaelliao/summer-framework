@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.itranswarp.summer.exception.DataAccessException;
 import com.itranswarp.summer.exception.TransactionException;
 
 public class DataSourceTransactionManager implements PlatformTransactionManager, InvocationHandler {
@@ -31,8 +30,7 @@ public class DataSourceTransactionManager implements PlatformTransactionManager,
                     connection.setAutoCommit(false);
                 }
                 try {
-                    ts = new TransactionStatus(connection);
-                    transactionStatus.set(ts);
+                    transactionStatus.set(new TransactionStatus(connection));
                     Object r = method.invoke(proxy, args);
                     connection.commit();
                     return r;
@@ -41,7 +39,7 @@ public class DataSourceTransactionManager implements PlatformTransactionManager,
                     try {
                         connection.rollback();
                     } catch (SQLException sqle) {
-                        te.addSuppressed(new DataAccessException(sqle));
+                        te.addSuppressed(sqle);
                     }
                     throw te;
                 } finally {
@@ -56,5 +54,4 @@ public class DataSourceTransactionManager implements PlatformTransactionManager,
             return method.invoke(proxy, args);
         }
     }
-
 }
