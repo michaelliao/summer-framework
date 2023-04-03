@@ -667,6 +667,23 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
     }
 
     /**
+     * 通过Type查找Beans
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getBeans(Class<T> requiredType) {
+        List<BeanDefinition> defs = findBeanDefinitions(requiredType);
+        if (defs.isEmpty()) {
+            return List.of();
+        }
+        List<T> list = new ArrayList<>(defs.size());
+        for (var def : defs) {
+            list.add((T) def.getRequiredInstance());
+        }
+        return list;
+    }
+
+    /**
      * 通过Type查找Bean，不存在抛出NoSuchBeanDefinitionException，存在多个但缺少唯一@Primary标注抛出NoUniqueBeanDefinitionException
      */
     @Override

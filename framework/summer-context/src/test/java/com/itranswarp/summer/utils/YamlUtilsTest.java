@@ -22,8 +22,7 @@ public class YamlUtilsTest {
         assertEquals("${AUTO_COMMIT:false}", configs.get("summer.datasource.auto-commit"));
         assertEquals("level-4", configs.get("other.deep.deep.level"));
 
-        // NOTE: yaml parse hex data and it looks different:
-        assertEquals("1715004", configs.get("other.hex-data"));
+        assertEquals("0x1a2b3c", configs.get("other.hex-data"));
         assertEquals("0x1a2b3c", configs.get("other.hex-string"));
     }
 }

@@ -5,9 +5,9 @@ app:
 # standard structure for datasource, mail, etc:
 summer:
   datasource:
-    url: jdbc:mysql://localhost:3306/test
-    username: root
-    password: m10n99c5
+    url: jdbc:hsqldb:file:testdb.tmp
+    username: sa
+    password: 
     auto-commit: ${AUTO_COMMIT:false}
 
 # test data types:
@@ -26,3 +26,18 @@ other:
     - Apple
     - Orange
     - Pear
+
+convert:
+  boolean: true
+  byte: 123
+  short: 12345
+  integer: 1234567
+  long: 123456789000
+  float: 12345.6789
+  double: 123456789.87654321
+  localdate: 2023-03-29
+  localtime: 20:45:01
+  localdatetime: 2023-03-29T20:45:01
+  zoneddatetime: 2023-03-29T20:45:01+08:00[Asia/Shanghai]
+  duration: P2DT3H4M
+  zoneid: Asia/Shanghai
