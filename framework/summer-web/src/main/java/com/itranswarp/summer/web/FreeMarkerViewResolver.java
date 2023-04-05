@@ -17,6 +17,7 @@ import com.itranswarp.summer.exception.ServerErrorException;
 import freemarker.cache.TemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
@@ -52,6 +53,10 @@ public class FreeMarkerViewResolver implements ViewResolver {
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
         cfg.setAutoEscapingPolicy(Configuration.ENABLE_IF_SUPPORTED_AUTO_ESCAPING_POLICY);
         cfg.setLocalizedLookup(false);
+
+        var ow = new DefaultObjectWrapper(Configuration.VERSION_2_3_32);
+        ow.setExposeFields(true);
+        cfg.setObjectWrapper(ow);
         this.config = cfg;
     }
 
