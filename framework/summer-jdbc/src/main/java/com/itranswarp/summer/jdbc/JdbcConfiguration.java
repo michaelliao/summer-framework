@@ -12,7 +12,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-public class JdbcAutoConfiguration {
+public class JdbcConfiguration {
 
     @Bean(destroyMethod = "close")
     DataSource dataSource(
