@@ -51,6 +51,7 @@ public class ClassUtils {
         return a;
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     public static <A extends Annotation> A getAnnotation(Annotation[] annos, Class<A> annoClass) {
         for (Annotation anno : annos) {
