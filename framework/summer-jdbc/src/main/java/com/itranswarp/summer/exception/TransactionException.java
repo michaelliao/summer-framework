@@ -1,6 +1,6 @@
 package com.itranswarp.summer.exception;
 
-public class TransactionException extends NestedRuntimeException {
+public class TransactionException extends DataAccessException {
 
     public TransactionException() {
     }

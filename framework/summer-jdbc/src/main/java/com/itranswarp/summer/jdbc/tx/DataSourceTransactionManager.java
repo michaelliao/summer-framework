@@ -1,17 +1,23 @@
 package com.itranswarp.summer.jdbc.tx;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.itranswarp.summer.exception.TransactionException;
 
 public class DataSourceTransactionManager implements PlatformTransactionManager, InvocationHandler {
 
     static final ThreadLocal<TransactionStatus> transactionStatus = new ThreadLocal<>();
+
+    final Logger logger = LoggerFactory.getLogger(getClass());
 
     final DataSource dataSource;
 
@@ -34,8 +40,9 @@ public class DataSourceTransactionManager implements PlatformTransactionManager,
                     Object r = method.invoke(proxy, args);
                     connection.commit();
                     return r;
-                } catch (Throwable e) {
-                    TransactionException te = new TransactionException(e);
+                } catch (InvocationTargetException e) {
+                    logger.warn("will rollback transaction for caused exception: {}", e.getCause() == null ? "null" : e.getCause().getClass().getName());
+                    TransactionException te = new TransactionException(e.getCause());
                     try {
                         connection.rollback();
                     } catch (SQLException sqle) {
