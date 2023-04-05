@@ -1,9 +1,7 @@
 package com.itranswarp.summer.web;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import jakarta.servlet.Filter;
 
@@ -15,15 +13,14 @@ public abstract class FilterRegistrationBean {
         return this.urlPatterns.toArray(String[]::new);
     }
 
-    public void setUrlPatterns(Collection<String> urlPatterns) {
-        Objects.requireNonNull(urlPatterns, "UrlPatterns must not be null");
+    public void setUrlPatterns(String... urlPatterns) {
+        if (urlPatterns == null || urlPatterns.length == 0) {
+            throw new IllegalArgumentException("Invalid url patterns.");
+        }
         this.urlPatterns.clear();
-        this.urlPatterns.addAll(urlPatterns);
-    }
-
-    public void addUrlPatterns(Collection<String> urlPatterns) {
-        Objects.requireNonNull(urlPatterns, "UrlPatterns must not be null");
-        this.urlPatterns.addAll(urlPatterns);
+        for (String urlPattern : urlPatterns) {
+            this.urlPatterns.add(urlPattern);
+        }
     }
 
     public abstract String getName();

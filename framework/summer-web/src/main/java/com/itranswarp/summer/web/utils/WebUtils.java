@@ -40,9 +40,10 @@ public class WebUtils {
         var applicationContext = ApplicationContextUtils.getRequiredApplicationContext();
         for (var filterRegBean : applicationContext.getBeans(FilterRegistrationBean.class)) {
             var filter = Objects.requireNonNull(filterRegBean.getFilter(), "FilterRegistrationBean.getFilter() must not return null.");
-            logger.info("register filter '{}' {}...", filterRegBean.getName(), filter.getClass().getName());
+            String[] urlPatterns = filterRegBean.getUrlPatterns();
+            logger.info("register filter '{}' {} for URLs: {}", filterRegBean.getName(), filter.getClass().getName(), String.join(", ", urlPatterns));
             var filterReg = servletContext.addFilter(filterRegBean.getName(), filter);
-            filterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, filterRegBean.getUrlPatterns());
+            filterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, urlPatterns);
         }
     }
 

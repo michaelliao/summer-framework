@@ -38,9 +38,9 @@ public class SummerServletContainerInitializer implements ServletContainerInitia
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(this.configClass, this.propertyResolver);
         logger.info("Application context created: {}", applicationContext);
 
-        // register DispatcherServlet:
-        WebUtils.registerDispatcherServlet(ctx, this.propertyResolver);
         // register filters:
         WebUtils.registerFilters(ctx);
+        // register DispatcherServlet:
+        WebUtils.registerDispatcherServlet(ctx, this.propertyResolver);
     }
 }

@@ -29,10 +29,10 @@ public class SummerListener implements ServletContextListener {
         servletContext.setRequestCharacterEncoding(encoding);
         servletContext.setResponseCharacterEncoding(encoding);
         this.applicationContext = createApplicationContext(servletContext.getInitParameter("configuration"), propertyResolver);
-        // register DispatcherServlet:
-        WebUtils.registerDispatcherServlet(servletContext, propertyResolver);
         // register filters:
         WebUtils.registerFilters(servletContext);
+        // register DispatcherServlet:
+        WebUtils.registerDispatcherServlet(servletContext, propertyResolver);
     }
 
     @Override
