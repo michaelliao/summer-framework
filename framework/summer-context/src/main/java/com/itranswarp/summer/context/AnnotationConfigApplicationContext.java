@@ -92,7 +92,12 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
         // 创建其他普通Bean:
         createNormalBeans();
 
-        // 通过字段和set方法注入依赖，并调用init方法:
+        // 通过字段和set方法注入依赖:
+        this.beans.values().forEach(def -> {
+            injectBean(def);
+        });
+
+        // 调用init方法:
         this.beans.values().forEach(def -> {
             initBean(def);
         });
@@ -292,9 +297,9 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
     }
 
     /**
-     * 注入依赖并调用init方法
+     * 注入依赖但不调用init方法
      */
-    void initBean(BeanDefinition def) {
+    void injectBean(BeanDefinition def) {
         // 获取Bean实例，或被代理的原始实例:
         final Object beanInstance = getProxiedInstance(def);
         try {
@@ -302,6 +307,14 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
         } catch (ReflectiveOperationException e) {
             throw new BeanCreationException(e);
         }
+    }
+
+    /**
+     * 调用init方法
+     */
+    void initBean(BeanDefinition def) {
+        // 获取Bean实例，或被代理的原始实例:
+        final Object beanInstance = getProxiedInstance(def);
 
         // 调用init方法:
         callMethod(beanInstance, def.getInitMethod(), def.getInitMethodName());
