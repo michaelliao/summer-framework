@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -149,10 +150,16 @@ public class DispatcherServlet extends HttpServlet {
                 resp.resetBuffer();
                 resp.sendError(e.statusCode);
             }
+        } catch (Exception e) {
+            logger.warn("process request failed: " + url, e);
+            if (!resp.isCommitted()) {
+                resp.resetBuffer();
+                resp.sendError(500);
+            }
         }
     }
 
-    void doService(String url, HttpServletRequest req, HttpServletResponse resp, List<Dispatcher> dispatchers) throws ServletException, IOException {
+    void doService(String url, HttpServletRequest req, HttpServletResponse resp, List<Dispatcher> dispatchers) throws Exception {
         for (Dispatcher dispatcher : dispatchers) {
             Result result = dispatcher.process(url, req, resp);
             if (result.processed()) {
@@ -288,7 +295,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
 
-        Result process(String url, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Result process(String url, HttpServletRequest request, HttpServletResponse response) throws Exception {
             Matcher matcher = urlPattern.matcher(url);
             if (matcher.matches()) {
                 Object[] arguments = new Object[this.methodParameters.length];
@@ -330,6 +337,12 @@ public class DispatcherServlet extends HttpServlet {
                 Object result = null;
                 try {
                     result = this.handlerMethod.invoke(this.controller, arguments);
+                } catch (InvocationTargetException e) {
+                    Throwable t = e.getCause();
+                    if (t instanceof Exception ex) {
+                        throw ex;
+                    }
+                    throw e;
                 } catch (ReflectiveOperationException e) {
                     throw new ServerErrorException(e);
                 }
