@@ -49,22 +49,30 @@ public class ResourceResolver {
 
     <R> void scan0(String basePackagePath, String path, List<R> collector, Function<Resource, R> mapper) throws IOException, URISyntaxException {
         logger.atDebug().log("scan path: {}", path);
-        Enumeration<URL> en = ClassLoader.getSystemClassLoader().getResources(path);
+        Enumeration<URL> en = getContextClassLoader().getResources(path);
         while (en.hasMoreElements()) {
             URL url = en.nextElement();
             URI uri = url.toURI();
-            String uriStr = uri.toString();
+            String uriStr = removeTrailingSlash(uri.toString());
             String uriBaseStr = uriStr.substring(0, uriStr.length() - basePackagePath.length());
             if (uriBaseStr.startsWith("file:")) {
                 uriBaseStr = uriBaseStr.substring(5);
             }
-            logger.atDebug().log("scan uri: {}", uri);
             if (uriStr.startsWith("jar:")) {
                 scanFile(true, uriBaseStr, jarUriToPath(basePackagePath, uri), collector, mapper);
             } else {
                 scanFile(false, uriBaseStr, Paths.get(uri), collector, mapper);
             }
         }
+    }
+
+    ClassLoader getContextClassLoader() {
+        ClassLoader cl = null;
+        cl = Thread.currentThread().getContextClassLoader();
+        if (cl == null) {
+            cl = getClass().getClassLoader();
+        }
+        return cl;
     }
 
     Path jarUriToPath(String basePackagePath, URI jarUri) throws IOException {
@@ -87,5 +95,12 @@ public class ResourceResolver {
                 collector.add(r);
             }
         });
+    }
+
+    String removeTrailingSlash(String s) {
+        if (s.endsWith("/") || s.endsWith("\\")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
     }
 }
