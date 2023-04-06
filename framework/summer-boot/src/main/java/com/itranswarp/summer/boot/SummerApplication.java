@@ -6,8 +6,6 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;

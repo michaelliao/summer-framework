@@ -32,6 +32,7 @@ public class WebUtils {
 
     public static void registerDispatcherServlet(ServletContext servletContext, PropertyResolver properyResolver) {
         var dispatcherServlet = new DispatcherServlet(ApplicationContextUtils.getRequiredApplicationContext(), properyResolver);
+        logger.info("register servlet {} for URL '/'", dispatcherServlet.getClass().getName());
         var dispatcherReg = servletContext.addServlet("dispatcherServlet", dispatcherServlet);
         dispatcherReg.addMapping("/");
         dispatcherReg.setLoadOnStartup(0);
