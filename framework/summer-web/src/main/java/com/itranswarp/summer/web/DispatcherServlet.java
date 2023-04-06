@@ -28,6 +28,7 @@ import com.itranswarp.summer.annotation.RestController;
 import com.itranswarp.summer.context.ApplicationContext;
 import com.itranswarp.summer.context.ConfigurableApplicationContext;
 import com.itranswarp.summer.exception.ErrorResponseException;
+import com.itranswarp.summer.exception.NestedRuntimeException;
 import com.itranswarp.summer.exception.ServerErrorException;
 import com.itranswarp.summer.exception.ServerWebInputException;
 import com.itranswarp.summer.io.PropertyResolver;
@@ -145,17 +146,17 @@ public class DispatcherServlet extends HttpServlet {
         try {
             doService(url, req, resp, dispatchers);
         } catch (ErrorResponseException e) {
-            logger.warn("process request failed: " + url, e);
+            logger.warn("process request failed with status " + e.statusCode + " : " + url, e);
             if (!resp.isCommitted()) {
                 resp.resetBuffer();
                 resp.sendError(e.statusCode);
             }
+        } catch (RuntimeException | ServletException | IOException e) {
+            logger.warn("process request failed: " + url, e);
+            throw e;
         } catch (Exception e) {
             logger.warn("process request failed: " + url, e);
-            if (!resp.isCommitted()) {
-                resp.resetBuffer();
-                resp.sendError(500);
-            }
+            throw new NestedRuntimeException(e);
         }
     }
 
@@ -420,7 +421,7 @@ public class DispatcherServlet extends HttpServlet {
                 // check servlet variable type:
                 if (this.classType != HttpServletRequest.class && this.classType != HttpServletResponse.class && this.classType != HttpSession.class
                         && this.classType != ServletContext.class) {
-                    throw new ServerErrorException("Unsupported argument type: " + classType + " at method: " + method);
+                    throw new ServerErrorException("(Missing annotation?) Unsupported argument type: " + classType + " at method: " + method);
                 }
             }
         }
