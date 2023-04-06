@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
@@ -56,7 +58,8 @@ public class SummerApplication {
         int port = propertyResolver.getProperty("${server.port:8080}", int.class);
         logger.info("starting Tomcat at port {}...", port);
         Tomcat tomcat = new Tomcat();
-        tomcat.getConnector().setPort(port);
+        tomcat.setPort(port);
+        tomcat.getConnector().setThrowOnFailure(true);
         Context ctx = tomcat.addWebapp("", new File(webDir).getAbsolutePath());
         WebResourceRoot resources = new StandardRoot(ctx);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", new File(baseDir).getAbsolutePath(), "/"));
