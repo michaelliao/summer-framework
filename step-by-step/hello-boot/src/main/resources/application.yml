@@ -1,0 +1,13 @@
+server:
+  port: ${PORT:8080}
+
+app:
+  title: Hello Application
+  version: 1.0
+
+summer:
+  datasource:
+    url: jdbc:sqlite:test.db
+    driver-class-name: org.sqlite.JDBC
+    username: sa
+    password: 

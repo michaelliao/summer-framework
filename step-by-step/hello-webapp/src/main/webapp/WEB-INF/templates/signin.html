@@ -1,0 +1,35 @@
+<!doctype html>
+<#include "_head.html">
+
+<body>
+    <#include "_nav.html">
+
+    <div class="container" style="padding-top: 80px;">
+        <div class="row">
+            <div class="col-12">
+                <h1>Sign In</h1>
+                <#if error??>
+                    <div class="alert alert-danger">${error}</div>
+                </#if>
+                <form method="post" action="/signin">
+                    <div class="mb-3">
+                        <label class="form-label">Email:</label>
+                        <input name="email" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password:</label>
+                        <input name="password" type="password" class="form-control" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <a href="/register" class="ms-4">Do not have an account?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <#include "_footer.html">
+</body>
+
+</html>

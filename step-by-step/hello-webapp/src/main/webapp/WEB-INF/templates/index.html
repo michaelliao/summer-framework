@@ -1,0 +1,21 @@
+<!doctype html>
+<#include "_head.html">
+
+<body>
+    <#include "_nav.html">
+
+    <div class="container" style="padding-top: 80px;">
+        <div class="row">
+            <div class="col-12">
+                <h1>Welcome, ${user.name}!</h1>
+                <p>Your email: ${user.email}</p>
+                <p>Your password: ******</p>
+                <p><a href="/signout">Sign Out</a></p>
+            </div>
+        </div>
+    </div>
+
+    <#include "_footer.html">
+</body>
+
+</html>
