@@ -16,8 +16,6 @@ public class SummerListener implements ServletContextListener {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
 
-    ApplicationContext applicationContext;
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         logger.info("init {}.", getClass().getName());
@@ -28,17 +26,19 @@ public class SummerListener implements ServletContextListener {
         String encoding = propertyResolver.getProperty("${summer.web.character-encoding:UTF-8}");
         servletContext.setRequestCharacterEncoding(encoding);
         servletContext.setResponseCharacterEncoding(encoding);
-        this.applicationContext = createApplicationContext(servletContext.getInitParameter("configuration"), propertyResolver);
+        var applicationContext = createApplicationContext(servletContext.getInitParameter("configuration"), propertyResolver);
         // register filters:
         WebUtils.registerFilters(servletContext);
         // register DispatcherServlet:
         WebUtils.registerDispatcherServlet(servletContext, propertyResolver);
+
+        servletContext.setAttribute("applicationContext", applicationContext);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (this.applicationContext != null) {
-            this.applicationContext.close();
+        if (sce.getServletContext().getAttribute("applicationContext") instanceof ApplicationContext applicationContext) {
+            applicationContext.close();
         }
     }
 
