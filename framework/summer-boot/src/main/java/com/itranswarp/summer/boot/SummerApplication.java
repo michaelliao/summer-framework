@@ -62,7 +62,7 @@ public class SummerApplication {
         WebResourceRoot resources = new StandardRoot(ctx);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", new File(baseDir).getAbsolutePath(), "/"));
         ctx.setResources(resources);
-        ctx.addServletContainerInitializer(new SummerServletContainerInitializer(configClass, propertyResolver), Set.of());
+        ctx.addServletContainerInitializer(new SummerInitializer(configClass, propertyResolver), Set.of());
         tomcat.start();
         logger.info("Tomcat started at port {}...", port);
         return tomcat.getServer();
