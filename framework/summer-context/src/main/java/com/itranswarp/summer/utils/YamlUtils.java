@@ -40,7 +40,6 @@ public class YamlUtils {
     }
 
     static void convertTo(Map<String, Object> source, String prefix, Map<String, Object> plain) {
-        System.out.println("convert " + prefix);
         for (String key : source.keySet()) {
             Object value = source.get(key);
             if (value instanceof Map) {
