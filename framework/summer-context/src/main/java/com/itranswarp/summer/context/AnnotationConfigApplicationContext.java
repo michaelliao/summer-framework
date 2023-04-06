@@ -238,7 +238,7 @@ public class AnnotationConfigApplicationContext implements ConfigurableApplicati
             }
             // 如果一个BeanPostProcessor替换了原始Bean，则更新Bean的引用:
             if (def.getInstance() != processed) {
-                logger.atDebug().log("Bean {} was replaced by post processor {}.", def.getName(), processor.getClass().getName());
+                logger.atDebug().log("Bean '{}' was replaced by post processor {}.", def.getName(), processor.getClass().getName());
                 def.setInstance(processed);
             }
         }

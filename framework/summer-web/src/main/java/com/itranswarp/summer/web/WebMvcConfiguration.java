@@ -27,7 +27,7 @@ public class WebMvcConfiguration {
         return (ServletContext) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { ServletContext.class }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return null;
+                throw new UnsupportedOperationException("Cannot invoke on dummy ServletContext.");
             }
         });
     }
