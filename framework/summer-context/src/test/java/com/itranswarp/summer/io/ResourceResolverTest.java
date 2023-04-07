@@ -22,7 +22,7 @@ public class ResourceResolverTest {
         List<String> classes = rr.scan(res -> {
             String name = res.name();
             if (name.endsWith(".class")) {
-                return name.substring(0, name.length() - 6).replace("/", ".");
+                return name.substring(0, name.length() - 6).replace("/", ".").replace("\\", ".");
             }
             return null;
         });
@@ -54,7 +54,7 @@ public class ResourceResolverTest {
         List<String> classes = rr.scan(res -> {
             String name = res.name();
             if (name.endsWith(".class")) {
-                return name.substring(0, name.length() - 6).replace("/", ".");
+                return name.substring(0, name.length() - 6).replace("/", ".").replace("\\", ".");
             }
             return null;
         });
@@ -74,7 +74,7 @@ public class ResourceResolverTest {
         List<String> classes = rr.scan(res -> {
             String name = res.name();
             if (name.endsWith(".txt")) {
-                return name;
+                return name.replace("\\", "/");
             }
             return null;
         });

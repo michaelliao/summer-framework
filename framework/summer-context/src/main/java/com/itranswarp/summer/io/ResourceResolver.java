@@ -80,13 +80,14 @@ public class ResourceResolver {
     }
 
     <R> void scanFile(boolean isJar, String base, Path root, List<R> collector, Function<Resource, R> mapper) throws IOException {
+    	String baseDir = removeTrailingSlash(base);
         Files.walk(root).filter(Files::isRegularFile).forEach(file -> {
             Resource res = null;
             if (isJar) {
-                res = new Resource(base, file.toString());
+                res = new Resource(baseDir, file.toString());
             } else {
                 String path = file.toString();
-                String name = path.substring(base.length());
+                String name = path.substring(baseDir.length());
                 res = new Resource("file:" + path, name);
             }
             logger.atDebug().log("found resource: {}", res);

@@ -8,6 +8,9 @@ import java.time.LocalTime;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 public class PropertyResolverTest {
 
@@ -59,6 +62,7 @@ public class PropertyResolverTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     public void propertyHolder() {
         String home = System.getenv("HOME");
         System.out.println("env HOME=" + home);
@@ -80,5 +84,16 @@ public class PropertyResolverTest {
         assertEquals(home, pr.getProperty("${app.path:${HOME}}"));
         assertEquals(home, pr.getProperty("${app.path:${app.home:${HOME}}}"));
         assertEquals("/not-exist", pr.getProperty("${app.path:${app.home:${ENV_NOT_EXIST:/not-exist}}}"));
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    public void propertyHolderOnWin() {
+        String os = System.getenv("OS");
+        System.out.println("env OS=" + os);
+
+        var props = new Properties();
+        var pr = new PropertyResolver(props);
+        assertEquals("Windows_NT", pr.getProperty("${app.os:${OS}}"));
     }
 }
