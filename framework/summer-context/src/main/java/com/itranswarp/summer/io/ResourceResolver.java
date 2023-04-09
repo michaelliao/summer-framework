@@ -80,14 +80,14 @@ public class ResourceResolver {
     }
 
     <R> void scanFile(boolean isJar, String base, Path root, List<R> collector, Function<Resource, R> mapper) throws IOException {
-    	String baseDir = removeTrailingSlash(base);
+        String baseDir = removeTrailingSlash(base);
         Files.walk(root).filter(Files::isRegularFile).forEach(file -> {
             Resource res = null;
             if (isJar) {
-                res = new Resource(baseDir, file.toString());
+                res = new Resource(baseDir, removeLeadingSlash(file.toString()));
             } else {
                 String path = file.toString();
-                String name = path.substring(baseDir.length());
+                String name = removeLeadingSlash(path.substring(baseDir.length()));
                 res = new Resource("file:" + path, name);
             }
             logger.atDebug().log("found resource: {}", res);
@@ -96,6 +96,13 @@ public class ResourceResolver {
                 collector.add(r);
             }
         });
+    }
+
+    String removeLeadingSlash(String s) {
+        if (s.startsWith("/") || s.startsWith("\\")) {
+            s = s.substring(1);
+        }
+        return s;
     }
 
     String removeTrailingSlash(String s) {
