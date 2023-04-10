@@ -1,10 +1,7 @@
 package com.itranswarp.summer.aop;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +33,7 @@ public class ProxyResolver {
     }
 
     @SuppressWarnings("unchecked")
-    public <T, A extends Annotation> T createProxy(T bean, InvocationHandler handler) {
+    public <T> T createProxy(T bean, InvocationHandler handler) {
         Class<?> targetClass = bean.getClass();
         logger.atDebug().log("create proxy for bean {} @{}", targetClass.getName(), Integer.toHexString(bean.hashCode()));
         Class<?> proxyClass = this.byteBuddy
@@ -63,22 +60,5 @@ public class ProxyResolver {
             throw new RuntimeException(e);
         }
         return (T) proxy;
-    }
-
-    @SuppressWarnings("unchecked")
-    <T> Class<T> getParameterizedType(Class<?> clazz) {
-        Type type = clazz.getGenericSuperclass();
-        if (!(type instanceof ParameterizedType)) {
-            throw new IllegalArgumentException("Class " + clazz.getName() + " does not have parameterized type.");
-        }
-        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
-        if (types.length != 1) {
-            throw new IllegalArgumentException("Class " + clazz.getName() + " has more than 1 parameterized types.");
-        }
-        Type r = types[0];
-        if (!(r instanceof Class<?>)) {
-            throw new IllegalArgumentException("Class " + clazz.getName() + " does not have parameterized type of class.");
-        }
-        return (Class<T>) r;
     }
 }
