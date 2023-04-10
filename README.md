@@ -1,5 +1,7 @@
 # Summer Framework
 
+![Build Status](https://github.com/michaelliao/summer-framework/actions/workflows/maven.yml/badge.svg)
+
 ![logo](logo.png)
 
 Summer Framework is a minimal Spring Framework.
