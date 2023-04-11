@@ -8,6 +8,7 @@ import com.itranswarp.summer.annotation.Configuration;
 import com.itranswarp.summer.annotation.Value;
 import com.itranswarp.summer.jdbc.tx.DataSourceTransactionManager;
 import com.itranswarp.summer.jdbc.tx.PlatformTransactionManager;
+import com.itranswarp.summer.jdbc.tx.TransactionalBeanPostProcessor;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 

@@ -1,4 +1,4 @@
-package com.itranswarp.summer.jdbc;
+package com.itranswarp.summer.jdbc.tx;
 
 import com.itranswarp.summer.annotation.Transactional;
 import com.itranswarp.summer.aop.AnnotationProxyBeanPostProcessor;
