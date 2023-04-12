@@ -35,13 +35,6 @@ public class SummerListener implements ServletContextListener {
         servletContext.setAttribute("applicationContext", applicationContext);
     }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        if (sce.getServletContext().getAttribute("applicationContext") instanceof ApplicationContext applicationContext) {
-            applicationContext.close();
-        }
-    }
-
     ApplicationContext createApplicationContext(String configClassName, PropertyResolver propertyResolver) {
         logger.info("init ApplicationContext by configuration: {}", configClassName);
         if (configClassName == null || configClassName.isEmpty()) {

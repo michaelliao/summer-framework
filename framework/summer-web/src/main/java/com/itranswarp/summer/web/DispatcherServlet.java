@@ -89,6 +89,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    @Override
+    public void destroy() {
+        this.applicationContext.close();
+    }
+
     void addController(boolean isRest, String name, Object instance) throws ServletException {
         logger.info("add {} controller '{}': {}", isRest ? "REST" : "MVC", name, instance.getClass().getName());
         addMethods(isRest, name, instance, instance.getClass());
@@ -119,11 +124,6 @@ public class DispatcherServlet extends HttpServlet {
             throw new ServletException("Cannot do URL mapping to static method: " + m);
         }
         m.setAccessible(true);
-    }
-
-    @Override
-    public void destroy() {
-        this.applicationContext.close();
     }
 
     @Override
