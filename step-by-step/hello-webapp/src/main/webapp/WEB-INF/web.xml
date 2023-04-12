@@ -8,6 +8,6 @@
 	</context-param>
 
 	<listener>
-		<listener-class>com.itranswarp.summer.web.SummerListener</listener-class>
+		<listener-class>com.itranswarp.summer.web.ContextLoaderListener</listener-class>
 	</listener>
 </web-app>
