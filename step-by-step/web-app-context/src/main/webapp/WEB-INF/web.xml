@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+	<display-name>Hello Webapp</display-name>
+
+	<context-param>
+		<param-name>configuration</param-name>
+		<param-value>com.itranswarp.summer.webapp.WebAppConfig</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>com.itranswarp.summer.web.ContextLoaderListener</listener-class>
+	</listener>
+</web-app>
