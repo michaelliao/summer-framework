@@ -12,7 +12,7 @@ import com.itranswarp.summer.web.utils.WebUtils;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
-public class SummerListener implements ServletContextListener {
+public class ContextLoaderListener implements ServletContextListener {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itranswarp.summer.io.PropertyResolver;
 import com.itranswarp.summer.utils.ClassPathUtils;
-import com.itranswarp.summer.web.SummerInitializer;
+import com.itranswarp.summer.web.ContextLoaderInitializer;
 import com.itranswarp.summer.web.utils.WebUtils;
 
 public class SummerApplication {
@@ -63,7 +63,7 @@ public class SummerApplication {
         WebResourceRoot resources = new StandardRoot(ctx);
         resources.addPreResources(new DirResourceSet(resources, "/WEB-INF/classes", new File(baseDir).getAbsolutePath(), "/"));
         ctx.setResources(resources);
-        ctx.addServletContainerInitializer(new SummerInitializer(configClass, propertyResolver), Set.of());
+        ctx.addServletContainerInitializer(new ContextLoaderInitializer(configClass, propertyResolver), Set.of());
         tomcat.start();
         logger.info("Tomcat started at port {}...", port);
         return tomcat.getServer();

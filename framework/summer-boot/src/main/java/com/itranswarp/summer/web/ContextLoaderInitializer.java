@@ -14,13 +14,13 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 
-public class SummerInitializer implements ServletContainerInitializer {
+public class ContextLoaderInitializer implements ServletContainerInitializer {
 
     final Logger logger = LoggerFactory.getLogger(getClass());
     final Class<?> configClass;
     final PropertyResolver propertyResolver;
 
-    public SummerInitializer(Class<?> configClass, PropertyResolver propertyResolver) {
+    public ContextLoaderInitializer(Class<?> configClass, PropertyResolver propertyResolver) {
         this.configClass = configClass;
         this.propertyResolver = propertyResolver;
     }
