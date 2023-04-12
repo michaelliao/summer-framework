@@ -1,4 +1,4 @@
-package com.itranswarp.summer.boot;
+package com.itranswarp.summer.web;
 
 import java.util.Set;
 
@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.itranswarp.summer.context.AnnotationConfigApplicationContext;
 import com.itranswarp.summer.context.ApplicationContext;
 import com.itranswarp.summer.io.PropertyResolver;
-import com.itranswarp.summer.web.ServletContextPostProcessor;
 import com.itranswarp.summer.web.utils.WebUtils;
 
 import jakarta.servlet.ServletContainerInitializer;
@@ -34,7 +33,7 @@ public class SummerInitializer implements ServletContainerInitializer {
         ctx.setRequestCharacterEncoding(encoding);
         ctx.setResponseCharacterEncoding(encoding);
 
-        ServletContextPostProcessor.setServletContext(ctx);
+        WebMvcConfiguration.setServletContext(ctx);
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(this.configClass, this.propertyResolver);
         logger.info("Application context created: {}", applicationContext);
 

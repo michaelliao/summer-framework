@@ -192,7 +192,7 @@ public class DispatcherServletTest {
     @BeforeEach
     void init() throws ServletException {
         this.ctx = createMockServletContext();
-        ServletContextPostProcessor.setServletContext(this.ctx);
+        WebMvcConfiguration.setServletContext(this.ctx);
         var propertyResolver = createPropertyResolver();
         var applicationContext = new AnnotationConfigApplicationContext(ControllerConfiguration.class, propertyResolver);
         this.dispatcherServlet = new DispatcherServlet(applicationContext, propertyResolver);

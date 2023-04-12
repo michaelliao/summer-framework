@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.itranswarp.summer.io.PropertyResolver;
 import com.itranswarp.summer.utils.ClassPathUtils;
+import com.itranswarp.summer.web.SummerInitializer;
 import com.itranswarp.summer.web.utils.WebUtils;
 
 public class SummerApplication {

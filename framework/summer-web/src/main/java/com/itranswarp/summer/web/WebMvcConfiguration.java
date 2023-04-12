@@ -1,8 +1,6 @@
 package com.itranswarp.summer.web;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.util.Objects;
 
 import com.itranswarp.summer.annotation.Autowired;
 import com.itranswarp.summer.annotation.Bean;
@@ -14,6 +12,15 @@ import jakarta.servlet.ServletContext;
 @Configuration
 public class WebMvcConfiguration {
 
+    private static ServletContext servletContext = null;
+
+    /**
+     * Set by web listener.
+     */
+    static void setServletContext(ServletContext ctx) {
+        servletContext = ctx;
+    }
+
     @Bean(initMethod = "init")
     ViewResolver viewResolver( //
             @Autowired ServletContext servletContext, //
@@ -24,16 +31,6 @@ public class WebMvcConfiguration {
 
     @Bean
     ServletContext servletContext() {
-        return (ServletContext) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { ServletContext.class }, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                throw new UnsupportedOperationException("Cannot invoke on dummy ServletContext.");
-            }
-        });
-    }
-
-    @Bean
-    ServletContextPostProcessor servletContextPostProcessor() {
-        return new ServletContextPostProcessor();
+        return Objects.requireNonNull(servletContext, "ServletContext is not set.");
     }
 }

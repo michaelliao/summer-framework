@@ -20,7 +20,7 @@ public class SummerListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         logger.info("init {}.", getClass().getName());
         var servletContext = sce.getServletContext();
-        ServletContextPostProcessor.setServletContext(servletContext);
+        WebMvcConfiguration.setServletContext(servletContext);
 
         var propertyResolver = WebUtils.createPropertyResolver();
         String encoding = propertyResolver.getProperty("${summer.web.character-encoding:UTF-8}");
