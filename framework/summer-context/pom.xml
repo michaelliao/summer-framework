@@ -4,12 +4,11 @@
 	<parent>
 		<groupId>com.itranswarp.summer</groupId>
 		<artifactId>summer-parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.3</version>
 		<relativePath>../summer-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>summer-context</artifactId>
-	<version>1.0.1</version>
 
 	<dependencies>
 		<dependency>

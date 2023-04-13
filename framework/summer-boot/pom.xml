@@ -4,24 +4,23 @@
 	<parent>
 		<groupId>com.itranswarp.summer</groupId>
 		<artifactId>summer-parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.3</version>
 		<relativePath>../summer-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>summer-boot</artifactId>
-	<version>1.0.1</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.itranswarp.summer</groupId>
 			<artifactId>summer-web</artifactId>
-			<version>${project.version}</version>
+			<version>1.0.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.itranswarp.summer</groupId>
 			<artifactId>summer-jdbc</artifactId>
-			<version>${project.version}</version>
+			<version>1.0.3</version>
 		</dependency>
 
 		<dependency>
