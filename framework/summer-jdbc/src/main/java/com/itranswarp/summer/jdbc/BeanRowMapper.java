@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.tree.RowMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,7 @@ public class BeanRowMapper<T> implements RowMapper<T> {
             ResultSetMetaData meta = rs.getMetaData();
             int columns = meta.getColumnCount();
             for (int i = 1; i <= columns; i++) {
-                String label = meta.getColumnLabel(i);
+                String label = underscoreToCamel(meta.getColumnLabel(i));
                 Method method = this.methods.get(label);
                 if (method != null) {
                     method.invoke(bean, rs.getObject(label));
@@ -72,5 +74,18 @@ public class BeanRowMapper<T> implements RowMapper<T> {
             throw new DataAccessException(String.format("Could not map result set to class %s", this.clazz.getName()), e);
         }
         return bean;
+    }
+
+    private String underscoreToCamel(String underscoreName) {
+        StringBuilder result = new StringBuilder();
+        String[] parts = underscoreName.split("_");
+        for (String part : parts) {
+            if (result.length() == 0) {
+                result.append(part);
+            } else {
+                result.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+            }
+        }
+        return result.toString();
     }
 }
