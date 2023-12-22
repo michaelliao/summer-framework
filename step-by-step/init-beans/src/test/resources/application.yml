@@ -1,0 +1,12 @@
+app:
+  title: Summer Framework
+  version: 1.0.0
+summer:
+  datasource:
+    auto-commit: ${AUTO_COMMIT:false}
+other:
+  deep:
+    deep:
+      level: level-4
+  hex-data: 0x1a2b3c
+  hex-string: "0x1a2b3c"
