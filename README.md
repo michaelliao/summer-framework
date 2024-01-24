@@ -1,8 +1,6 @@
 # Summer Framework
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.itranswarp.summer/summer-boot/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.itranswarp.summer/summer-boot)
-
-![Build Status](https://github.com/michaelliao/summer-framework/actions/workflows/maven.yml/badge.svg)
+![Maven Central](https://img.shields.io/maven-central/v/com.itranswarp.summer/summer-boot) ![Build Status](https://github.com/michaelliao/summer-framework/actions/workflows/maven.yml/badge.svg)
 
 ![logo](logo.png)
 
