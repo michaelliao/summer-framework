@@ -20,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
 
     ApplicationContext applicationContext;
 
-    public DispatcherServlet(ApplicationContext applicationContext, PropertyResolver properyResolver) {
+    public DispatcherServlet(ApplicationContext applicationContext, PropertyResolver propertyResolver) {
         this.applicationContext = applicationContext;
     }
 

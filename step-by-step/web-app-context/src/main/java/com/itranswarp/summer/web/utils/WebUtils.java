@@ -23,8 +23,8 @@ public class WebUtils {
     static final String CONFIG_APP_YAML = "/application.yml";
     static final String CONFIG_APP_PROP = "/application.properties";
 
-    public static void registerDispatcherServlet(ServletContext servletContext, PropertyResolver properyResolver) {
-        var dispatcherServlet = new DispatcherServlet(ApplicationContextUtils.getRequiredApplicationContext(), properyResolver);
+    public static void registerDispatcherServlet(ServletContext servletContext, PropertyResolver propertyResolver) {
+        var dispatcherServlet = new DispatcherServlet(ApplicationContextUtils.getRequiredApplicationContext(), propertyResolver);
         logger.info("register servlet {} for URL '/'", dispatcherServlet.getClass().getName());
         var dispatcherReg = servletContext.addServlet("dispatcherServlet", dispatcherServlet);
         dispatcherReg.addMapping("/");

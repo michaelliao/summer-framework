@@ -58,11 +58,11 @@ public class DispatcherServlet extends HttpServlet {
     List<Dispatcher> getDispatchers = new ArrayList<>();
     List<Dispatcher> postDispatchers = new ArrayList<>();
 
-    public DispatcherServlet(ApplicationContext applicationContext, PropertyResolver properyResolver) {
+    public DispatcherServlet(ApplicationContext applicationContext, PropertyResolver propertyResolver) {
         this.applicationContext = applicationContext;
         this.viewResolver = applicationContext.getBean(ViewResolver.class);
-        this.resourcePath = properyResolver.getProperty("${summer.web.static-path:/static/}");
-        this.faviconPath = properyResolver.getProperty("${summer.web.favicon-path:/favicon.ico}");
+        this.resourcePath = propertyResolver.getProperty("${summer.web.static-path:/static/}");
+        this.faviconPath = propertyResolver.getProperty("${summer.web.favicon-path:/favicon.ico}");
         if (!this.resourcePath.endsWith("/")) {
             this.resourcePath = this.resourcePath + "/";
         }
