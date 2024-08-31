@@ -14,4 +14,4 @@ Components of Summer Framework:
 - summer-web: Support web application with Servlet 6.0;
 - summer-boot: Run Summer application simple and quick like Spring Boot.
 
-[Tutorial](https://www.liaoxuefeng.com/wiki/1539348902182944)
+[Tutorial](https://liaoxuefeng.com/books/summerframework/)
