@@ -6,7 +6,7 @@
 
 # Overview
 
-This document provides a comprehensive overview of the Summer Framework architecture, its core components, and how they interact. Summer Framework is a lightweight dependency injection and web framework inspired by Spring Framework, providing essential functionality for Java application development.
+Summer Framework is a lightweight dependency injection and web framework inspired by Spring Framework, providing essential functionality for Java application development.
 
 # What is Summer Framework?
 
